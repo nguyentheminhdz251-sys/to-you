@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffebee;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            perspective: 2000px;
+        }
+
+        /* Nền trái tim rơi */
+        .heart-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff4d6d;
+            animation: move linear infinite;
+        }
+
+        @keyframes move {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- PHẦN TIPS (MỚI THÊM) --- */
+        .tips-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 10000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .tips-panel {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            border: 2px solid #ff4d6d;
+            max-width: 250px;
+            display: none;
+            z-index: 10000;
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .tips-panel b {
+            color: #ff4d6d;
+        }
+
+        /* Container Page 1 & 2 */
+        .container {
+            text-align: center;
+            background-color: #ffdbac;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+            transition: opacity 0.5s ease;
+        }
+
+        #page-1 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gif-container {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        .gif-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .title {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.5rem;
+            color: #ff4d6d;
+            text-shadow: 2px 2px 0px #fff;
+            margin-bottom: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        button {
+            padding: 12px 35px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        #btn-yes {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        #btn-no {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #page-2 {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .open-box {
+            background-color: #ffffff;
+            border: 3px dashed #ff4d6d;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .open-box span {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: #ff4d6d;
+            font-weight: bold;
+        }
+
+        /* --- TRANG 3: PHONG BÌ & THƯ --- */
+        #page-3 {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            position: relative;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background-color: #ff8fa3;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 5;
+        }
+
+        .envelope-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 50;
+            border-top: 110px solid #ffb3c1;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            transform-origin: top;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .envelope-wrapper.open::before {
+            transform: rotateX(180deg);
+            z-index: 5;
+        }
+
+        .envelope-wrapper::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ff8fa3;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            z-index: 40;
+        }
+
+        .letter {
+            position: absolute;
+            bottom: 5px;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .envelope-wrapper.open .letter {
+            transform: translateY(-110px);
+            z-index: 60;
+            opacity: 1;
+        }
+
+        .letter.full-screen {
+            position: fixed;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 85vw;
+            height: 75vh;
+            max-width: 600px;
+            max-height: 500px;
+            z-index: 9999 !important;
+            padding: 30px;
+            opacity: 1;
+        }
+
+        .letter-content {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.3rem;
+            color: #ff4d6d;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .heart-seal {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: #ff4d6d;
+            border-radius: 50%;
+            z-index: 55;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s;
+        }
+
+        #paper-plane {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            display: none;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .plane-active {
+            display: block !important;
+            animation: paperPlaneFlight 3.5s ease-in forwards;
+        }
+
+        .plane-to-center {
+            display: block !important;
+            animation: planeToEnvelope 1.2s ease-out forwards;
+        }
+
+        @keyframes paperPlaneFlight {
+            0% {
+                transform: translate(0, 0) rotateZ(0deg) scale(0.1);
+                opacity: 0;
+            }
+
+            5% {
+                opacity: 1;
+            }
+
+            30% {
+                transform: translate(-350px, -100px) rotateZ(-160deg) scale(1.2);
+            }
+
+            60% {
+                transform: translate(0px, 0px) rotateZ(0deg) scale(8);
+                opacity: 1;
+            }
+
+            80% {
+                transform: translate(400px, 0px) rotateZ(5deg) scale(4);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(1800px, 0px) rotateZ(0deg) scale(2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes planeToEnvelope {
+            0% {
+                transform: translate(-500px, 0) rotateZ(0deg) scale(1.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(0, 0) rotateZ(0deg) scale(0.8);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="heart-bg" id="heart-bg"></div>
+
+    <button class="tips-btn" onclick="toggleTips()">Tips</button>
+    <div class="tips-panel" id="tips-panel">
+        <p><b>• Xưng hô cậu tớ:</b> Không biết cách xưng hô kiểu gì cho nó hợp :>></p>
+        <p><b>• Món quà vật chất:</b> No money :>></p>
+    </div>
+
+    <div id="paper-plane">
+        <svg viewBox="0 0 512 512" fill="#ff4d6d" style="transform: rotate(45deg);">
+            <path
+                d="M499.07 10.29C486.3 0.61 469.17-2.12 454 3.09L28.16 148.11c-16.7 5.62-28.09 21.05-28.16 38.67s11.16 33.15 27.81 38.93l145.47 50.5 50.5 145.47c5.68 16.38 21.06 27.68 38.63 27.81h0.33c17.62 0 33.05-11.39 38.67-28.09L498.9 48.33c5.21-15.17 2.48-32.31-7.2-45.08l-2.63-3.03zM256 339.63l-34.69-100c-2.8-8.06-9.15-14.41-17.21-17.21l-100-34.69L419.66 75.66 256 339.63z">
+            </path>
+        </svg>
+    </div>
+
+    <div class="container" id="page-1">
+        <div class="gif-container"><img src="cute.gif" alt="Cute"></div>
+        <div class="title">Will you be my love?</div>
+        <div class="btn-group">
+            <button id="btn-yes" onclick="showPage2()">YES</button>
+            <button id="btn-no">NO</button>
+        </div>
+    </div>
+
+    <div class="container" id="page-2">
+        <div class="gif-container"><img src="give.gif" alt="Give"></div>
+        <div class="title" style="font-size: 1.8rem;">Bạn có một lời nhắn!</div>
+        <div class="open-box" id="open-box" onclick="flyPlane()">
+            <span>Mở nó đi ^^</span>
+        </div>
+    </div>
+
+    <div id="page-3">
+        <div class="envelope-wrapper" id="envelope">
+            <div class="heart-seal" id="seal">❤</div>
+            <div class="letter" id="letter">
+                <div class="letter-content">
+                    <div class="greeting">
+                        Nhân dịp 20/10 này,
+                    </div>
+
+                    <div class="message">
+                        Em chúc chị luôn xinh đẹp, rạng rỡ và lúc nào cũng gặp thật nhiều điều may mắn.<br>
+                        Mong chị lúc nào cũng vui vẻ, vì em thấy chị cười trông rất xinh ạaa. 💗<br>
+                        Chúc chị có một ngày thật vui vẻ ạaa! ❤️
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+            function toggleTips() {
+                const panel = document.getElementById('tips-panel');
+                panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            }
+
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+                document.getElementById('heart-bg').appendChild(heart);
+                setTimeout(() => { heart.remove(); }, 5000);
+            }
+            setInterval(createHeart, 300);
+
+            const btnNo = document.getElementById('btn-no');
+            btnNo.addEventListener('mouseover', () => {
+                const x = Math.random() * (window.innerWidth - btnNo.offsetWidth);
+                const y = Math.random() * (window.innerHeight - btnNo.offsetHeight);
+                btnNo.style.position = 'fixed';
+                btnNo.style.left = x + 'px';
+                btnNo.style.top = y + 'px';
+            });
+
+            function showPage2() {
+                document.getElementById('page-1').style.display = 'none';
+                document.getElementById('page-2').style.display = 'flex';
+            }
+
+            function flyPlane() {
+                const plane = document.getElementById('paper-plane');
+                const box = document.getElementById('open-box');
+                const page2 = document.getElementById('page-2');
+                const rect = box.getBoundingClientRect();
+
+                plane.style.left = (rect.left + rect.width / 4) + 'px';
+                plane.style.top = rect.top + 'px';
+                plane.classList.add('plane-active');
+
+                setTimeout(() => { page2.style.opacity = '0'; }, 2600);
+                setTimeout(() => {
+                    page2.style.display = 'none';
+                    document.getElementById('page-3').style.display = 'flex';
+                    flyPlaneIntoEnvelope();
+                }, 3500);
+            }
+
+            function flyPlaneIntoEnvelope() {
+                const plane = document.getElementById('paper-plane');
+                const seal = document.getElementById('seal');
+                const envelope = document.getElementById('envelope');
+                const letter = document.getElementById('letter');
+                const sealRect = seal.getBoundingClientRect();
+
+                plane.classList.remove('plane-active');
+                plane.style.left = sealRect.left + 'px';
+                plane.style.top = sealRect.top + 'px';
+                plane.style.opacity = '1';
+                void plane.offsetWidth;
+                plane.classList.add('plane-to-center');
+
+                setTimeout(() => {
+                    plane.style.zIndex = "-1";
+                    plane.style.opacity = '0';
+                    seal.style.opacity = '0';
+                    envelope.classList.add('open');
+                    setTimeout(() => {
+                        letter.classList.add('full-screen');
+                        setTimeout(() => { plane.style.display = 'none'; }, 200);
+                    }, 1000);
+                }, 1100);
+            }
+        </script>
+</body>
+
+</html>
